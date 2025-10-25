@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Başlangıç Kılavuzu - Transport System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 40px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        .step h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        .step p {
+            line-height: 1.8;
+            color: #555;
+            margin: 10px 0;
+        }
+        .step ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        .step li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #28a745;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .feature h4 {
+            color: #667eea;
+            margin: 10px 0;
+        }
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .alert {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚢 Transport & Management System</h1>
+            <p>Muğla'dan Dünyaya Kargo Taşımacılığı</p>
+        </div>
+        
+        <div class="content">
+            <div class="alert">
+                <strong>✅ Sistem Hazır!</strong> Projeniz başarıyla oluşturuldu. Aşağıdaki adımları takip ederek sistemi kullanmaya başlayabilirsiniz.
+            </div>
+            
+            <div class="buttons">
+                <a href="index.html" class="btn btn-primary">🏠 Müşteri Sayfası</a>
+                <a href="admin.html" class="btn btn-secondary">🔧 Admin Paneli</a>
+                <a href="test.html" class="btn btn-warning">🧪 Test Sayfası</a>
+            </div>
+            
+            <h2 style="color: #667eea; margin: 40px 0 20px 0;">📚 Hızlı Başlangıç</h2>
+            
+            <div class="step">
+                <h3>1️⃣ Müşteri Olarak Sevkiyat Oluşturun</h3>
+                <p><strong>Hedef:</strong> İlk sevkiyatınızı oluşturun ve fiyat hesaplayın.</p>
+                <ul>
+                    <li><a href="index.html" target="_blank">Müşteri sayfasına</a> gidin</li>
+                    <li>"Yeni Sevkiyat Oluştur" butonuna tıklayın</li>
+                    <li>Formu doldurun:
+                        <ul>
+                            <li>Müşteri Adı: <code>Ali Yılmaz</code></li>
+                            <li>Ürün: <code>Blueberries</code></li>
+                            <li>Kategori: <code>Fresh</code></li>
+                            <li>Ağırlık: <code>500</code> kg</li>
+                            <li>Konteyner: <code>Small</code></li>
+                            <li>Hedef Şehir: <code>Berlin</code></li>
+                            <li>Hedef Ülke: <code>Germany</code></li>
+                        </ul>
+                    </li>
+                    <li>"Fiyat Hesapla ve Oluştur" butonuna tıklayın</li>
+                    <li>Fiyatı görün: <code>₺15,000</code> (3000 km × ₺5/km)</li>
+                    <li>"Sevkiyatı Onayla" ile tamamlayın</li>
+                </ul>
+                <p><strong>Sonuç:</strong> Sipariş ID'nizi alacaksınız ve envanter otomatik güncellenecek!</p>
+            </div>
+            
+            <div class="step">
+                <h3>2️⃣ Sevkiyatı Takip Edin</h3>
+                <p><strong>Hedef:</strong> Oluşturduğunuz sevkiyatı takip edin.</p>
+                <ul>
+                    <li>Müşteri sayfasında "Takip" bölümüne inin</li>
+                    <li>Sipariş ID'nizi girin</li>
+                    <li>Sevkiyat detaylarını ve durumunu görün</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3>3️⃣ Admin Paneline Giriş Yapın</h3>
+                <p><strong>Hedef:</strong> Sevkiyatları ve sistemi yönetin.</p>
+                <ul>
+                    <li><a href="admin.html" target="_blank">Admin paneline</a> gidin</li>
+                    <li>"Sevkiyatlar" sekmesinde tüm siparişleri görün</li>
+                    <li>Sevkiyat durumunu güncelleyin (Beklemede → Hazır → Yolda → Tamamlandı)</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3>4️⃣ Konteynerleri Optimize Edin</h3>
+                <p><strong>Hedef:</strong> Sevkiyatları verimli şekilde konteynerlere yerleştirin.</p>
+                <ul>
+                    <li>"Konteyner Optimizasyonu" sekmesine gidin</li>
+                    <li>"Konteynerleri Optimize Et" butonuna tıklayın</li>
+                    <li>Sistem otomatik olarak:
+                        <ul>
+                            <li>Sevkiyatları ağırlığa göre sıralar</li>
+                            <li>En uygun konteynerlere yerleştirir</li>
+                            <li>Boş alanı minimize eder</li>
+                        </ul>
+                    </li>
+                    <li>Konteyner doluluk oranlarını görün</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3>5️⃣ Finansalları Hesaplayın</h3>
+                <p><strong>Hedef:</strong> Şirketin gelir-gider durumunu görün.</p>
+                <ul>
+                    <li>"Finans" sekmesine gidin</li>
+                    <li>"Finansalları Hesapla" butonuna tıklayın</li>
+                    <li>Görüntülenen bilgiler:
+                        <ul>
+                            <li>Toplam Gelir (tamamlanan sevkiyatlar)</li>
+                            <li>Toplam Giderler (filo + diğer)</li>
+                            <li>Net Gelir</li>
+                            <li>Vergi (%20)</li>
+                            <li>Vergi Sonrası Kar</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3>6️⃣ Envanteri Kontrol Edin</h3>
+                <p><strong>Hedef:</strong> Stok durumunu izleyin.</p>
+                <ul>
+                    <li>"Envanter" sekmesine gidin</li>
+                    <li>3 kategoriyi görün: Fresh, Frozen, Organic</li>
+                    <li>Her kategorinin:
+                        <ul>
+                            <li>Mevcut stok miktarı</li>
+                            <li>Minimum stok seviyesi</li>
+                            <li>Durum (Normal/Düşük)</li>
+                        </ul>
+                    </li>
+                    <li>Düşük stok uyarılarını takip edin</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <h3>7️⃣ Kapsamlı Rapor Oluşturun</h3>
+                <p><strong>Hedef:</strong> Tüm sistemi özetleyen detaylı rapor.</p>
+                <ul>
+                    <li>"Raporlar" sekmesine gidin</li>
+                    <li>"Rapor Oluştur" butonuna tıklayın</li>
+                    <li>Rapor içeriği:
+                        <ul>
+                            <li>Finansal Özet</li>
+                            <li>Sevkiyat İstatistikleri</li>
+                            <li>Konteyner Kullanımı</li>
+                            <li>Kategori Bazlı Satışlar</li>
+                            <li>Mevcut Envanter</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <h2 style="color: #667eea; margin: 40px 0 20px 0;">🎯 Özellikler</h2>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="icon">📦</div>
+                    <h4>Otomatik Fiyatlandırma</h4>
+                    <p>Mesafe ve konteyner tipine göre dinamik fiyat hesaplama</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">🚢</div>
+                    <h4>Filo Yönetimi</h4>
+                    <p>3 gemi ve 4 kamyon takibi</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">📊</div>
+                    <h4>Finansal Raporlar</h4>
+                    <p>Gelir, gider, vergi ve kar hesaplamaları</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">🫐</div>
+                    <h4>Envanter Kontrolü</h4>
+                    <p>Otomatik stok takibi ve uyarılar</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">📦</div>
+                    <h4>Konteyner Optimizasyonu</h4>
+                    <p>Akıllı yük dağılımı algoritması</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">📍</div>
+                    <h4>Sevkiyat Takibi</h4>
+                    <p>Gerçek zamanlı durum güncellemeleri</p>
+                </div>
+            </div>
+            
+            <div class="alert alert-warning">
+                <strong>💡 İpucu:</strong> Test için birden fazla sevkiyat oluşturun ve konteyner optimizasyonunun nasıl çalıştığını görün!
+            </div>
+            
+            <div class="step">
+                <h3>🔧 Test ve Geliştirme</h3>
+                <p><strong>Veri Sıfırlama:</strong> Tarayıcı konsolunda çalıştırın:</p>
+                <code style="display: block; padding: 10px; margin: 10px 0;">
+                    localStorage.clear();<br>
+                    location.reload();
+                </code>
+                <p><strong>Test Sayfası:</strong> <a href="test.html" target="_blank">test.html</a> sayfasından sistem durumunu kontrol edin.</p>
+            </div>
+            
+            <div class="buttons">
+                <a href="index.html" class="btn btn-primary">Müşteri Sayfasına Git →</a>
+                <a href="admin.html" class="btn btn-secondary">Admin Paneline Git →</a>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                <p style="color: #666;">
+                    📖 Detaylı bilgi için <strong>README.md</strong> dosyasını okuyun<br>
+                    🐛 Sorun yaşarsanız <strong>test.html</strong> ile sistemi kontrol edin
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

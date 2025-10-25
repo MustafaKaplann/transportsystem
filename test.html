@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .warning { color: #ffc107; }
+        h1 { color: #667eea; }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #5568d3; }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Transport System - Test Panel</h1>
+    
+    <div class="test-card">
+        <h2>Sistem Durumu</h2>
+        <div id="status"></div>
+    </div>
+    
+    <div class="test-card">
+        <h2>Otomatik Testler</h2>
+        <button onclick="runAllTests()">Tüm Testleri Çalıştır</button>
+        <button onclick="clearAllData()">Tüm Verileri Sil</button>
+        <button onclick="initializeSampleData()">Örnek Veri Yükle</button>
+        <div id="test-results"></div>
+    </div>
+    
+    <div class="test-card">
+        <h2>Veri Durumu</h2>
+        <button onclick="showDataStatus()">Veri Durumunu Göster</button>
+        <pre id="data-status"></pre>
+    </div>
+
+    <script>
+        // Test fonksiyonları
+        function runAllTests() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<h3>Test Sonuçları:</h3>';
+            
+            let passed = 0;
+            let failed = 0;
+            
+            // Test 1: LocalStorage desteği
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                results.innerHTML += '<p class="success">✅ LocalStorage desteği: OK</p>';
+                passed++;
+            } catch(e) {
+                results.innerHTML += '<p class="error">❌ LocalStorage desteği: HATA</p>';
+                failed++;
+            }
+            
+            // Test 2: Veri yapıları
+            if (typeof CONTAINER_TYPES !== 'undefined') {
+                results.innerHTML += '<p class="success">✅ Konteyner veri yapısı: OK</p>';
+                passed++;
+            } else {
+                results.innerHTML += '<p class="error">❌ Konteyner veri yapısı: BULUNAMADI</p>';
+                failed++;
+            }
+            
+            // Test 3: Mesafe hesaplama
+            if (typeof calculateDistance === 'function') {
+                const dist = calculateDistance('Berlin', 'Germany');
+                if (dist > 0) {
+                    results.innerHTML += `<p class="success">✅ Mesafe hesaplama: OK (Berlin = ${dist} km)</p>`;
+                    passed++;
+                } else {
+                    results.innerHTML += '<p class="error">❌ Mesafe hesaplama: HATALI</p>';
+                    failed++;
+                }
+            } else {
+                results.innerHTML += '<p class="error">❌ Mesafe hesaplama fonksiyonu: BULUNAMADI</p>';
+                failed++;
+            }
+            
+            // Test 4: Fiyat hesaplama
+            if (typeof calculatePrice === 'function') {
+                const price = calculatePrice(500, 3000, 'Small');
+                if (!price.error && price.totalPrice === 15000) {
+                    results.innerHTML += `<p class="success">✅ Fiyat hesaplama: OK (₺${price.totalPrice})</p>`;
+                    passed++;
+                } else {
+                    results.innerHTML += '<p class="error">❌ Fiyat hesaplama: HATALI</p>';
+                    failed++;
+                }
+            } else {
+                results.innerHTML += '<p class="error">❌ Fiyat hesaplama fonksiyonu: BULUNAMADI</p>';
+                failed++;
+            }
+            
+            // Test 5: Envanter kontrolü
+            const inventory = loadFromStorage('inventory');
+            if (inventory && inventory.Fresh) {
+                results.innerHTML += `<p class="success">✅ Envanter sistemi: OK (Fresh: ${inventory.Fresh.quantity} kg)</p>`;
+                passed++;
+            } else {
+                results.innerHTML += '<p class="warning">⚠️ Envanter sistemi: Başlatılmamış</p>';
+            }
+            
+            // Özet
+            results.innerHTML += `<hr><h4>Özet: ${passed} başarılı, ${failed} hatalı</h4>`;
+        }
+        
+        function clearAllData() {
+            if (confirm('Tüm veriler silinecek! Emin misiniz?')) {
+                localStorage.clear();
+                alert('Tüm veriler silindi! Sayfa yenilenecek.');
+                location.reload();
+            }
+        }
+        
+        function initializeSampleData() {
+            // Örnek sevkiyat verisi
+            const sampleShipment = {
+                id: 'SHP' + Date.now(),
+                customerName: 'Ali Yılmaz',
+                productName: 'Blueberries',
+                category: 'Fresh',
+                weight: 500,
+                containerType: 'Small',
+                destination: 'Berlin, Germany',
+                destinationCity: 'Berlin',
+                destinationCountry: 'Germany',
+                distance: 3000,
+                totalPrice: 15000,
+                estimatedDays: 6,
+                pricePerKm: 5,
+                status: 'Pending',
+                containerId: null,
+                createdAt: new Date().toISOString()
+            };
+            
+            const shipments = loadFromStorage('shipments') || [];
+            shipments.push(sampleShipment);
+            saveToStorage('shipments', shipments);
+            
+            alert('Örnek veri yüklendi!\n\nSipariş ID: ' + sampleShipment.id);
+            showDataStatus();
+        }
+        
+        function showDataStatus() {
+            const status = document.getElementById('data-status');
+            
+            const shipments = loadFromStorage('shipments') || [];
+            const containers = loadFromStorage('containers') || [];
+            const inventory = loadFromStorage('inventory') || {};
+            const financials = loadFromStorage('financials') || {};
+            
+            status.textContent = JSON.stringify({
+                sevkiyatlar: shipments.length + ' adet',
+                konteynerler: containers.length + ' adet',
+                envanter: {
+                    Fresh: inventory.Fresh?.quantity + ' kg',
+                    Frozen: inventory.Frozen?.quantity + ' kg',
+                    Organic: inventory.Organic?.quantity + ' kg'
+                },
+                finansal: {
+                    gelir: '₺' + (financials.totalRevenue || 0),
+                    gider: '₺' + (financials.totalExpenses || 0),
+                    kar: '₺' + (financials.profitAfterTax || 0)
+                }
+            }, null, 2);
+        }
+        
+        // Sistem durumunu göster
+        function checkSystemStatus() {
+            const status = document.getElementById('status');
+            let html = '';
+            
+            // Dosya kontrolü
+            html += '<p class="success">✅ Test sayfası yüklendi</p>';
+            
+            // Data.js kontrolü
+            if (typeof initializeSystem === 'function') {
+                html += '<p class="success">✅ data.js yüklendi</p>';
+                initializeSystem();
+            } else {
+                html += '<p class="error">❌ data.js yüklenemedi</p>';
+            }
+            
+            // LocalStorage kontrolü
+            try {
+                const test = localStorage.getItem('test');
+                html += '<p class="success">✅ LocalStorage çalışıyor</p>';
+            } catch(e) {
+                html += '<p class="error">❌ LocalStorage hatası: ' + e.message + '</p>';
+            }
+            
+            status.innerHTML = html;
+        }
+        
+        // Sayfa yüklendiğinde
+        window.onload = checkSystemStatus;
+    </script>
+    
+    <script src="js/data.js"></script>
+</body>
+</html>

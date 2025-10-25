@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Transport Management</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>🔧 Admin Panel</h1>
+                <p>Transport Management System</p>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Ana Sayfa</a>
+                <a href="admin.html" class="active">Admin Panel</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Tabs -->
+    <div class="admin-container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('shipments')">Sevkiyatlar</button>
+            <button class="tab-btn" onclick="showTab('containers')">Konteyner Optimizasyonu</button>
+            <button class="tab-btn" onclick="showTab('fleet')">Filo Yönetimi</button>
+            <button class="tab-btn" onclick="showTab('financials')">Finans</button>
+            <button class="tab-btn" onclick="showTab('inventory')">Envanter</button>
+            <button class="tab-btn" onclick="showTab('reports')">Raporlar</button>
+        </div>
+
+        <!-- Shipments Tab -->
+        <div id="shipments-tab" class="tab-content active">
+            <h2>Sevkiyat Yönetimi</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="total-shipments">0</h3>
+                    <p>Toplam Sevkiyat</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="pending-shipments">0</h3>
+                    <p>Bekleyen</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="completed-shipments">0</h3>
+                    <p>Tamamlanan</p>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="shipments-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Müşteri</th>
+                            <th>Ürün</th>
+                            <th>Ağırlık (kg)</th>
+                            <th>Hedef</th>
+                            <th>Fiyat</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shipments-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Container Optimization Tab -->
+        <div id="containers-tab" class="tab-content">
+            <h2>Konteyner Optimizasyonu</h2>
+            <button class="btn-primary" onclick="optimizeContainers()">Konteynerleri Optimize Et</button>
+            <div id="optimization-result" class="optimization-result"></div>
+            <div class="container-grid" id="container-grid"></div>
+        </div>
+
+        <!-- Fleet Management Tab -->
+        <div id="fleet-tab" class="tab-content">
+            <h2>Filo Yönetimi</h2>
+            
+            <h3>Gemiler</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>İsim</th>
+                            <th>Kapasite (kg)</th>
+                            <th>Yakıt (₺/km)</th>
+                            <th>Mürettebat</th>
+                            <th>Bakım</th>
+                            <th>Toplam Gider</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ships-tbody"></tbody>
+                </table>
+            </div>
+
+            <h3>Kamyonlar</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>İsim</th>
+                            <th>Kapasite (kg)</th>
+                            <th>Yakıt (₺/km)</th>
+                            <th>Sürücü</th>
+                            <th>Bakım</th>
+                            <th>Toplam Gider</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trucks-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Financials Tab -->
+        <div id="financials-tab" class="tab-content">
+            <h2>Finansal Özet</h2>
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <h3 id="total-revenue">₺0</h3>
+                    <p>Toplam Gelir</p>
+                </div>
+                <div class="stat-card danger">
+                    <h3 id="total-expenses">₺0</h3>
+                    <p>Toplam Gider</p>
+                </div>
+                <div class="stat-card info">
+                    <h3 id="net-income">₺0</h3>
+                    <p>Net Gelir</p>
+                </div>
+                <div class="stat-card warning">
+                    <h3 id="tax-amount">₺0</h3>
+                    <p>Vergi (20%)</p>
+                </div>
+                <div class="stat-card success">
+                    <h3 id="profit-after-tax">₺0</h3>
+                    <p>Vergi Sonrası Kar</p>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="calculateFinancials()">Finansalları Hesapla</button>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory-tab" class="tab-content">
+            <h2>Envanter Yönetimi</h2>
+            <div class="inventory-grid" id="inventory-grid"></div>
+            <div id="inventory-alerts"></div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports-tab" class="tab-content">
+            <h2>Kapsamlı Raporlar</h2>
+            <button class="btn-primary" onclick="generateReport()">Rapor Oluştur</button>
+            <div id="report-content" class="report-content"></div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

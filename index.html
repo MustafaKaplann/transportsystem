@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transport & Management System - Ana Sayfa</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>🚢 Global Freight Transport</h1>
+                <p>Muğla, Turkey - Worldwide Shipping</p>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="active">Ana Sayfa</a>
+                <a href="#tracking">Takip</a>
+                <a href="admin.html">Admin Girişi</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Dünya Çapında Güvenli Taşımacılık</h2>
+            <p>Muğla'dan dünyanın her yerine güvenli ve hızlı kargo hizmeti</p>
+            <button class="btn-primary" onclick="showShipmentForm()">Yeni Sevkiyat Oluştur</button>
+        </div>
+    </section>
+
+    <!-- Shipment Form Section -->
+    <section id="shipment-form" class="section" style="display: none;">
+        <div class="container">
+            <h2>Sevkiyat Bilgilerini Girin</h2>
+            <form id="createShipmentForm" onsubmit="createShipment(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Müşteri Adı *</label>
+                        <input type="text" id="customerName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ürün Adı *</label>
+                        <input type="text" id="productName" value="Blueberries" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Kategori *</label>
+                        <select id="category" required>
+                            <option value="Fresh">Fresh (Taze)</option>
+                            <option value="Frozen">Frozen (Dondurulmuş)</option>
+                            <option value="Organic">Organic (Organik)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ağırlık (kg) *</label>
+                        <input type="number" id="weight" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Konteyner Tipi *</label>
+                        <select id="containerType" required>
+                            <option value="Small">Small (2,000 kg - ₺5/km)</option>
+                            <option value="Medium">Medium (5,000 kg - ₺8/km)</option>
+                            <option value="Large">Large (10,000 kg - ₺12/km)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hedef Şehir *</label>
+                        <input type="text" id="destinationCity" placeholder="Örn: Berlin" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hedef Ülke *</label>
+                        <input type="text" id="destinationCountry" placeholder="Örn: Germany" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ürün Görseli (URL)</label>
+                        <input type="text" id="productImage" placeholder="https://...">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Fiyat Hesapla ve Oluştur</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Price Result Section -->
+    <section id="price-result" class="section" style="display: none;">
+        <div class="container">
+            <div class="result-card">
+                <h2>Sevkiyat Özeti</h2>
+                <div id="resultContent"></div>
+                <button class="btn-primary" onclick="confirmShipment()">Sevkiyatı Onayla</button>
+                <button class="btn-secondary" onclick="resetForm()">Yeni Sevkiyat</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tracking Section -->
+    <section id="tracking" class="section">
+        <div class="container">
+            <h2>Sevkiyat Takibi</h2>
+            <div class="tracking-form">
+                <input type="text" id="trackingId" placeholder="Sipariş ID'nizi girin">
+                <button class="btn-primary" onclick="trackShipment()">Takip Et</button>
+            </div>
+            <div id="tracking-result"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Global Freight Transport - Muğla, Turkey</p>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/customer.js"></script>
+</body>
+</html>
