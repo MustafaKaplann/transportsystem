@@ -11,51 +11,53 @@ const STORAGE_KEYS = {
     FLEET: 'fleet'
 };
 
-// Konteyner tipleri ve fiyatları
+// Konteyner tipleri ve fiyatları (Müşteriye Satış Fiyatları)
+
 const CONTAINER_TYPES = {
     Small: {
         capacity: 2000,
-        pricePerKm: 5
+        pricePerKm: 25    // ₺25/km (kar marjı dahil)
     },
     Medium: {
         capacity: 5000,
-        pricePerKm: 8
+        pricePerKm: 40    // ₺40/km
     },
     Large: {
         capacity: 10000,
-        pricePerKm: 12
+        pricePerKm: 65    // ₺65/km
     }
 };
 
 // Filo Verileri
+
 const FLEET_DATA = {
     ships: [
         {
             id: 'S001',
             name: 'BlueSea',
             capacity: 100000,
-            fuelCostPerKm: 40,
-            crewCost: 20000,
-            maintenance: 10000,
-            totalExpense: 70000
+            fuelCostPerKm: 180,  // Deniz yakıtı (HFO) - deniz mili başına ~₺180
+            crewCost: 450000,    // Aylık mürettebat maaşları (15-20 kişi)
+            maintenance: 250000, // Aylık bakım ve sigorta
+            totalExpense: 880000
         },
         {
             id: 'S002',
             name: 'OceanStar',
             capacity: 120000,
-            fuelCostPerKm: 50,
-            crewCost: 25000,
-            maintenance: 12000,
-            totalExpense: 87000
+            fuelCostPerKm: 220,
+            crewCost: 550000,
+            maintenance: 300000,
+            totalExpense: 1070000
         },
         {
             id: 'S003',
             name: 'AegeanWind',
             capacity: 90000,
-            fuelCostPerKm: 35,
-            crewCost: 18000,
-            maintenance: 8000,
-            totalExpense: 61000
+            fuelCostPerKm: 150,
+            crewCost: 400000,
+            maintenance: 200000,
+            totalExpense: 750000
         }
     ],
     trucks: [
@@ -63,37 +65,37 @@ const FLEET_DATA = {
             id: 'T001',
             name: 'RoadKing',
             capacity: 10000,
-            fuelCostPerKm: 8,
-            driverCost: 3000,
-            maintenance: 2000,
-            totalExpense: 8000
+            fuelCostPerKm: 45,      // Dizel yakıt ₺45/km (ortalama 4-5 lt/km × ₺40/lt)
+            driverCost: 85000,      // Aylık şoför maaşı + primler
+            maintenance: 35000,     // Aylık bakım, lastik, sigorta
+            totalExpense: 120000
         },
         {
             id: 'T002',
             name: 'FastMove',
             capacity: 12000,
-            fuelCostPerKm: 9,
-            driverCost: 3500,
-            maintenance: 2500,
-            totalExpense: 9000
+            fuelCostPerKm: 50,
+            driverCost: 90000,
+            maintenance: 40000,
+            totalExpense: 130000
         },
         {
             id: 'T003',
             name: 'CargoPro',
             capacity: 9000,
-            fuelCostPerKm: 7,
-            driverCost: 2800,
-            maintenance: 2000,
-            totalExpense: 7800
+            fuelCostPerKm: 40,
+            driverCost: 80000,
+            maintenance: 30000,
+            totalExpense: 110000
         },
         {
             id: 'T004',
             name: 'HeavyLoad',
             capacity: 15000,
-            fuelCostPerKm: 10,
-            driverCost: 4000,
-            maintenance: 3000,
-            totalExpense: 10500
+            fuelCostPerKm: 60,
+            driverCost: 95000,
+            maintenance: 45000,
+            totalExpense: 140000
         }
     ]
 };
@@ -230,42 +232,33 @@ function initializeSystem() {
 // Mesafe Hesaplama Fonksiyonu
 // ============================================
 
-function calculateDistance(city, country) {
-    // Önce şehir ismini kontrol et
-    if (DISTANCES[city]) {
-        return DISTANCES[city];
+// ============================================
+// Mesafe Hesaplama Fonksiyonu
+// ============================================
+
+function calculateDistance(country, shipmentType) {
+    // Sevkiyat türüne göre uygun mesafe verisini seç
+    let distances;
+    
+    if (shipmentType === 'road') {
+        distances = window.ROAD_DISTANCES || {};
+    } else if (shipmentType === 'sea') {
+        distances = window.SEA_DISTANCES || {};
+    } else {
+        return 2500; // Varsayılan mesafe
     }
     
-    // Yoksa ülke bazlı yaklaşık mesafe döndür
-    const countryDistances = {
-        'Turkey': 400,
-        'Germany': 3000,
-        'France': 3200,
-        'UK': 3500,
-        'United Kingdom': 3500,
-        'Italy': 2100,
-        'Spain': 3800,
-        'Netherlands': 3300,
-        'Belgium': 3250,
-        'Greece': 750,
-        'Bulgaria': 800,
-        'UAE': 3500,
-        'Saudi Arabia': 2800,
-        'Kuwait': 2500,
-        'Qatar': 3200,
-        'Japan': 11000,
-        'China': 9000,
-        'Singapore': 9200,
-        'Thailand': 8500,
-        'USA': 10000,
-        'United States': 10000,
-        'Canada': 9800,
-        'Australia': 15000,
-        'India': 6500,
-        'Egypt': 1800
-    };
+    // Ülke adını bul
+    if (distances[country]) {
+        return distances[country];
+    }
     
-    return countryDistances[country] || 2500; // Varsayılan mesafe
+    // Eğer bulunamazsa DISTANCES'dan (eski veri) dene
+    if (DISTANCES[country]) {
+        return DISTANCES[country];
+    }
+    
+    return 2500; // Varsayılan mesafe
 }
 
 // ============================================

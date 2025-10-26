@@ -1,33 +1,37 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Muğla'dan dünya çapında güvenli ve hızlı kargo taşımacılığı hizmeti. Sevkiyat oluşturun, takip edin ve yönetin.">
+    <meta name="description"
+        content="Muğla'dan dünya çapında güvenli ve hızlı kargo taşımacılığı hizmeti. Sevkiyat oluşturun, takip edin ve yönetin.">
     <meta name="keywords" content="kargo, taşımacılık, sevkiyat, lojistik, Muğla, Türkiye">
     <meta name="author" content="Global Freight Transport">
     <title>Transport & Management System - Ana Sayfa</title>
-    
+
     <!-- Preload critical resources -->
     <link rel="preload" href="css/style.css" as="style">
     <link rel="preload" href="js/data.js" as="script">
     <link rel="preload" href="js/customer.js" as="script">
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
-    
+
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚢</text></svg>">
-    
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚢</text></svg>">
+
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Transport & Management System">
     <meta property="og:description" content="Muğla'dan dünya çapında güvenli ve hızlı kargo taşımacılığı">
     <meta property="og:type" content="website">
     <meta property="og:url" content="">
-    
+
     <!-- Theme Color -->
     <meta name="theme-color" content="#667eea">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar" role="navigation" aria-label="Ana navigasyon">
@@ -40,8 +44,6 @@
                 <a href="index.html" class="active" role="menuitem" aria-current="page">Ana Sayfa</a>
                 <a href="#tracking" role="menuitem">Takip</a>
                 <a href="admin.html" role="menuitem">Admin Girişi</a>
-                <a href="start.html" role="menuitem">Başlangıç</a>
-                <a href="test.html" role="menuitem">Test</a>
             </div>
         </div>
     </nav>
@@ -66,35 +68,24 @@
         <section id="shipment-form" class="section" style="display: none;" aria-labelledby="shipment-form-title">
             <div class="container">
                 <h2 id="shipment-form-title">Sevkiyat Bilgilerini Girin</h2>
-                <form id="createShipmentForm" onsubmit="createShipment(event)" novalidate aria-label="Sevkiyat oluşturma formu">
+                <form id="createShipmentForm" onsubmit="createShipment(event)" novalidate
+                    aria-label="Sevkiyat oluşturma formu">
                     <fieldset>
                         <legend class="sr-only">Sevkiyat Detayları</legend>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="customerName">Müşteri Adı *</label>
-                                <input 
-                                    type="text" 
-                                    id="customerName" 
-                                    name="customerName"
-                                    required 
-                                    aria-describedby="customerName-error"
-                                    autocomplete="name"
-                                    placeholder="Adınızı ve soyadınızı girin"
-                                >
-                                <div id="customerName-error" class="error-message" role="alert" aria-live="polite"></div>
+                                <input type="text" id="customerName" name="customerName" required
+                                    aria-describedby="customerName-error" autocomplete="name"
+                                    placeholder="Adınızı ve soyadınızı girin">
+                                <div id="customerName-error" class="error-message" role="alert" aria-live="polite">
+                                </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="productName">Ürün Adı *</label>
-                                <input 
-                                    type="text" 
-                                    id="productName" 
-                                    name="productName"
-                                    value="Blueberries" 
-                                    required
-                                    aria-describedby="productName-error"
-                                    placeholder="Ürün adını girin"
-                                >
+                                <input type="text" id="productName" name="productName" value="Blueberries" required
+                                    aria-describedby="productName-error" placeholder="Ürün adını girin">
                                 <div id="productName-error" class="error-message" role="alert" aria-live="polite"></div>
                             </div>
 
@@ -111,71 +102,48 @@
 
                             <div class="form-group">
                                 <label for="weight">Ağırlık (kg) *</label>
-                                <input 
-                                    type="number" 
-                                    id="weight" 
-                                    name="weight"
-                                    min="1" 
-                                    max="10000"
-                                    step="0.1"
-                                    required
+                                <input type="number" id="weight" name="weight" min="1" max="10000" step="0.1" required
                                     aria-describedby="weight-error weight-help"
-                                    placeholder="Ağırlığı kg cinsinden girin"
-                                >
+                                    placeholder="Ağırlığı kg cinsinden girin">
                                 <div id="weight-help" class="sr-only">Minimum 1 kg, maksimum 10000 kg olabilir</div>
                                 <div id="weight-error" class="error-message" role="alert" aria-live="polite"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="containerType">Konteyner Tipi *</label>
-                                <select id="containerType" name="containerType" required aria-describedby="containerType-error containerType-help">
+                                <select id="containerType" name="containerType" required
+                                    aria-describedby="containerType-error containerType-help">
                                     <option value="">Konteyner tipi seçin</option>
-                                    <option value="Small">Small (2,000 kg - ₺5/km)</option>
-                                    <option value="Medium">Medium (5,000 kg - ₺8/km)</option>
-                                    <option value="Large">Large (10,000 kg - ₺12/km)</option>
+                                    <option value="Small">Small (2,000 kg - ₺25/km)</option>
+                                    <option value="Medium">Medium (5,000 kg - ₺40/km)</option>
+                                    <option value="Large">Large (10,000 kg - ₺65/km)</option>
                                 </select>
-                                <div id="containerType-help" class="sr-only">Konteyner tipi kapasitesi ve fiyatı belirler</div>
-                                <div id="containerType-error" class="error-message" role="alert" aria-live="polite"></div>
+                                <div id="containerType-help" class="sr-only">Konteyner tipi kapasitesi ve fiyatı
+                                    belirler</div>
+                                <div id="containerType-error" class="error-message" role="alert" aria-live="polite">
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="destinationCity">Hedef Şehir *</label>
-                                <input 
-                                    type="text" 
-                                    id="destinationCity" 
-                                    name="destinationCity"
-                                    placeholder="Örn: Berlin" 
-                                    required
-                                    aria-describedby="destinationCity-error"
-                                    autocomplete="address-level2"
-                                >
-                                <div id="destinationCity-error" class="error-message" role="alert" aria-live="polite"></div>
+                                <label for="shipmentType">Sevkiyat Türü *</label>
+                                <select id="shipmentType" name="shipmentType" required
+                                    aria-describedby="shipmentType-error" onchange="updateCountryOptions()">
+                                    <option value="">Sevkiyat türü seçin</option>
+                                    <option value="road">Kara Yolu</option>
+                                    <option value="sea">Deniz Yolu</option>
+                                </select>
+                                <div id="shipmentType-error" class="error-message" role="alert" aria-live="polite">
+                                </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="destinationCountry">Hedef Ülke *</label>
-                                <input 
-                                    type="text" 
-                                    id="destinationCountry" 
-                                    name="destinationCountry"
-                                    placeholder="Örn: Germany" 
-                                    required
-                                    aria-describedby="destinationCountry-error"
-                                    autocomplete="country"
-                                >
-                                <div id="destinationCountry-error" class="error-message" role="alert" aria-live="polite"></div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="productImage">Ürün Görseli (URL)</label>
-                                <input 
-                                    type="url" 
-                                    id="productImage" 
-                                    name="productImage"
-                                    placeholder="https://..."
-                                    aria-describedby="productImage-help"
-                                >
-                                <div id="productImage-help" class="sr-only">Opsiyonel: Ürün görseli için URL girin</div>
+                                <select id="destinationCountry" name="destinationCountry" required
+                                    aria-describedby="destinationCountry-error">
+                                    <option value="">Önce sevkiyat türünü seçin</option>
+                                </select>
+                                <div id="destinationCountry-error" class="error-message" role="alert"
+                                    aria-live="polite"></div>
                             </div>
                         </div>
                     </fieldset>
@@ -216,14 +184,8 @@
                 <h2 id="tracking-title">Sevkiyat Takibi</h2>
                 <div class="tracking-form">
                     <label for="trackingId" class="sr-only">Sipariş ID</label>
-                    <input 
-                        type="text" 
-                        id="trackingId" 
-                        name="trackingId"
-                        placeholder="Sipariş ID'nizi girin"
-                        aria-describedby="tracking-help tracking-error"
-                        autocomplete="off"
-                    >
+                    <input type="text" id="trackingId" name="trackingId" placeholder="Sipariş ID'nizi girin"
+                        aria-describedby="tracking-help tracking-error" autocomplete="off">
                     <button class="btn-primary" onclick="trackShipment()" aria-describedby="track-help">
                         Takip Et
                     </button>
@@ -256,14 +218,14 @@
             white-space: nowrap;
             border: 0;
         }
-        
+
         .form-actions {
             display: flex;
             gap: var(--spacing-md);
             margin-top: var(--spacing-xl);
             flex-wrap: wrap;
         }
-        
+
         @media (max-width: 768px) {
             .form-actions {
                 flex-direction: column;
@@ -272,7 +234,11 @@
     </style>
 
     <!-- Scripts -->
+    <script src="js/road_distances.js"></script>
+    <script src="js/sea_distances.js"></script>
     <script src="js/data.js"></script>
     <script src="js/customer.js"></script>
 </body>
+</body>
+
 </html>

@@ -24,48 +24,54 @@ function hideShipmentForm() {
 
 function createShipment(event) {
     event.preventDefault();
-    
+
     // Form verilerini al
     const customerName = document.getElementById('customerName').value.trim();
     const productName = document.getElementById('productName').value.trim();
     const category = document.getElementById('category').value;
     const weight = parseFloat(document.getElementById('weight').value);
     const containerType = document.getElementById('containerType').value;
-    const destinationCity = document.getElementById('destinationCity').value.trim();
-    const destinationCountry = document.getElementById('destinationCountry').value.trim();
-    const productImage = document.getElementById('productImage').value.trim();
-    
+    const shipmentType = document.getElementById('shipmentType').value;
+    const destinationCountry = document.getElementById('destinationCountry').value;
+
     // Validasyon
-    if (!customerName || !productName || !weight || weight <= 0) {
+    if (!customerName || !productName || !weight || weight <= 0 || !shipmentType || !destinationCountry) {
         alert('Lütfen tüm gerekli alanları doldurun!');
         return;
     }
-    
+
+    // Sevkiyat türü ve hedef ülke uyumluluğunu kontrol et
+    const compatibilityCheck = checkShipmentCompatibility(shipmentType, destinationCountry);
+    if (!compatibilityCheck.compatible) {
+        alert(`⚠️ Uyarı: ${compatibilityCheck.message}`);
+        return;
+    }
+
     // Konteyner kapasitesi kontrolü
     const containerInfo = CONTAINER_TYPES[containerType];
     if (weight > containerInfo.capacity) {
         alert(`⚠️ Uyarı: Ağırlık (${weight} kg), ${containerType} konteyner kapasitesini (${containerInfo.capacity} kg) aşıyor!\n\nLütfen daha büyük bir konteyner seçin veya ağırlığı azaltın.`);
         return;
     }
-    
+
     // Envanter kontrolü
     const inventoryCheck = checkInventoryAvailability(category, weight);
     if (!inventoryCheck.available) {
         alert(`⚠️ Stok Uyarısı: ${category} kategorisinde yeterli stok yok!\n\nMevcut Stok: ${inventoryCheck.currentStock} kg\nTalep Edilen: ${weight} kg`);
         return;
     }
-    
+
     // Mesafe hesapla
-    const distance = calculateDistance(destinationCity, destinationCountry);
-    
+    const distance = calculateDistance(destinationCountry, shipmentType);
+
     // Fiyat hesapla
     const priceResult = calculatePrice(weight, distance, containerType);
-    
+
     if (priceResult.error) {
         alert(priceResult.message);
         return;
     }
-    
+
     // Sevkiyat verisini hazırla
     currentShipmentData = {
         id: generateShipmentId(),
@@ -74,10 +80,10 @@ function createShipment(event) {
         category: category,
         weight: weight,
         containerType: containerType,
-        destination: `${destinationCity}, ${destinationCountry}`,
-        destinationCity: destinationCity,
+        shipmentType: shipmentType,
+        destination: `Muğla → ${destinationCountry}`,
         destinationCountry: destinationCountry,
-        productImage: productImage,
+        destinationCity: destinationCountry,
         distance: priceResult.distance,
         totalPrice: priceResult.totalPrice,
         estimatedDays: priceResult.estimatedDays,
@@ -86,7 +92,7 @@ function createShipment(event) {
         containerId: null,
         createdAt: new Date().toISOString()
     };
-    
+
     // Sonuç sayfasını göster
     displayPriceResult(currentShipmentData);
 }
@@ -192,12 +198,12 @@ class ShipmentManager {
     handleTabNavigation(e) {
         const activeElement = document.activeElement;
         const tabElements = document.querySelectorAll('button, input, select, a[href]');
-        const tabList = Array.from(tabElements).filter(el => 
+        const tabList = Array.from(tabElements).filter(el =>
             !el.disabled && !el.hidden && el.offsetParent !== null
         );
-        
+
         const currentIndex = tabList.indexOf(activeElement);
-        
+
         if (e.shiftKey && currentIndex === 0) {
             e.preventDefault();
             tabList[tabList.length - 1].focus();
@@ -209,10 +215,10 @@ class ShipmentManager {
 
     async handleFormSubmit(event) {
         event.preventDefault();
-        
+
         try {
             this.showLoadingState();
-            
+
             // Validate all fields
             const isValid = await this.validateForm();
             if (!isValid) {
@@ -222,7 +228,7 @@ class ShipmentManager {
 
             // Get form data
             const formData = this.getFormData();
-            
+
             // Validate business rules
             const businessValidation = await this.validateBusinessRules(formData);
             if (!businessValidation.valid) {
@@ -233,7 +239,7 @@ class ShipmentManager {
 
             // Process shipment
             await this.processShipment(formData);
-            
+
         } catch (error) {
             console.error('Form submission error:', error);
             this.notificationManager.showError('Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.');
@@ -263,10 +269,10 @@ class ShipmentManager {
     async validateField(field) {
         const fieldName = field.name || field.id;
         const value = field.value.trim();
-        
+
         try {
             const validation = this.formValidation.validate(fieldName, value);
-            
+
             if (validation.valid) {
                 this.clearFieldError(field);
                 this.showFieldSuccess(field);
@@ -298,7 +304,7 @@ class ShipmentManager {
         if (formGroup) {
             formGroup.classList.add('error');
             formGroup.classList.remove('success');
-            
+
             const errorElement = formGroup.querySelector('.error-message');
             if (errorElement) {
                 errorElement.textContent = message;
@@ -317,7 +323,7 @@ class ShipmentManager {
     getFormData() {
         const form = document.getElementById('createShipmentForm');
         const formData = new FormData(form);
-        
+
         return {
             customerName: formData.get('customerName')?.trim(),
             productName: formData.get('productName')?.trim(),
@@ -339,18 +345,18 @@ class ShipmentManager {
             }
 
             if (formData.weight > containerInfo.capacity) {
-                return { 
-                    valid: false, 
-                    message: `Ağırlık (${formData.weight} kg), ${formData.containerType} konteyner kapasitesini (${containerInfo.capacity} kg) aşıyor!` 
+                return {
+                    valid: false,
+                    message: `Ağırlık (${formData.weight} kg), ${formData.containerType} konteyner kapasitesini (${containerInfo.capacity} kg) aşıyor!`
                 };
             }
 
             // Inventory check
             const inventoryCheck = this.checkInventoryAvailability(formData.category, formData.weight);
             if (!inventoryCheck.available) {
-                return { 
-                    valid: false, 
-                    message: `${formData.category} kategorisinde yeterli stok yok! Mevcut: ${inventoryCheck.currentStock} kg` 
+                return {
+                    valid: false,
+                    message: `${formData.category} kategorisinde yeterli stok yok! Mevcut: ${inventoryCheck.currentStock} kg`
                 };
             }
 
@@ -365,10 +371,10 @@ class ShipmentManager {
         try {
             // Calculate distance
             const distance = calculateDistance(formData.destinationCity, formData.destinationCountry);
-            
+
             // Calculate price
             const priceResult = calculatePrice(formData.weight, distance, formData.containerType);
-            
+
             if (priceResult.error) {
                 throw new Error(priceResult.message);
             }
@@ -390,7 +396,7 @@ class ShipmentManager {
             // Display results
             this.displayPriceResult(this.currentShipmentData);
             this.notificationManager.showSuccess('Fiyat hesaplaması tamamlandı!');
-            
+
         } catch (error) {
             console.error('Shipment processing error:', error);
             throw error;
@@ -421,11 +427,11 @@ class ShipmentManager {
 
     checkInventoryAvailability(category, quantity) {
         const inventory = loadFromStorage(STORAGE_KEYS.INVENTORY);
-        
+
         if (!inventory[category]) {
             return { available: false, currentStock: 0 };
         }
-        
+
         return {
             available: inventory[category].quantity >= quantity,
             currentStock: inventory[category].quantity
@@ -433,61 +439,67 @@ class ShipmentManager {
     }
 
     displayPriceResult(shipmentData) {
-    const resultContent = document.getElementById('resultContent');
-    
-    resultContent.innerHTML = `
-        <div class="result-item">
-            <span class="result-label">Sipariş ID:</span>
-            <span class="result-value">${shipmentData.id}</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">Müşteri:</span>
-            <span class="result-value">${shipmentData.customerName}</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">Ürün:</span>
-            <span class="result-value">${shipmentData.productName} (${shipmentData.category})</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">Ağırlık:</span>
-            <span class="result-value">${shipmentData.weight} kg</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">Konteyner Tipi:</span>
-            <span class="result-value">${shipmentData.containerType}</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">Hedef:</span>
-            <span class="result-value">${shipmentData.destination}</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">Mesafe:</span>
-            <span class="result-value">${shipmentData.distance} km</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">Km Başı Fiyat:</span>
-            <span class="result-value">₺${shipmentData.pricePerKm}/km</span>
-        </div>
-        <div class="result-item">
-            <span class="result-label">Tahmini Teslimat:</span>
-            <span class="result-value">${shipmentData.estimatedDays} gün</span>
-        </div>
-            <div class="result-item" style="border-top: 2px solid var(--primary-color); padding-top: 1rem; margin-top: 1rem;">
-            <span class="result-label" style="font-size: 1.2rem;">TOPLAM FİYAT:</span>
-            <span class="result-value price">₺${shipmentData.totalPrice.toLocaleString('tr-TR')}</span>
-        </div>
-    `;
-    
-    document.getElementById('price-result').style.display = 'block';
-    document.getElementById('price-result').scrollIntoView({ behavior: 'smooth' });
-}
+        const resultContent = document.getElementById('resultContent');
+
+        const shipmentTypeText = shipmentData.shipmentType === 'road' ? 'Kara Yolu 🚚' : 'Deniz Yolu 🚢';
+
+        resultContent.innerHTML = `
+            <div class="result-item">
+                <span class="result-label">Sipariş ID:</span>
+                <span class="result-value">${shipmentData.id}</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Müşteri:</span>
+                <span class="result-value">${shipmentData.customerName}</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Ürün:</span>
+                <span class="result-value">${shipmentData.productName} (${shipmentData.category})</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Ağırlık:</span>
+                <span class="result-value">${shipmentData.weight} kg</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Konteyner Tipi:</span>
+                <span class="result-value">${shipmentData.containerType}</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Sevkiyat Türü:</span>
+                <span class="result-value">${shipmentTypeText}</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Hedef:</span>
+                <span class="result-value">${shipmentData.destinationCountry}</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Mesafe:</span>
+                <span class="result-value">${shipmentData.distance} km</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Km Başı Fiyat:</span>
+                <span class="result-value">₺${shipmentData.pricePerKm}/km</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Tahmini Teslimat:</span>
+                <span class="result-value">${shipmentData.estimatedDays} gün</span>
+            </div>
+                <div class="result-item" style="border-top: 2px solid var(--primary-color); padding-top: 1rem; margin-top: 1rem;">
+                <span class="result-label" style="font-size: 1.2rem;">TOPLAM FİYAT:</span>
+                <span class="result-value price">₺${shipmentData.totalPrice.toLocaleString('tr-TR')}</span>
+            </div>
+        `;
+
+        document.getElementById('price-result').style.display = 'block';
+        document.getElementById('price-result').scrollIntoView({ behavior: 'smooth' });
+    }
 
     resetForm() {
         document.getElementById('createShipmentForm').reset();
         document.getElementById('shipment-form').style.display = 'none';
         document.getElementById('price-result').style.display = 'none';
         this.currentShipmentData = null;
-        
+
         // Clear all validation states
         const formGroups = document.querySelectorAll('.form-group');
         formGroups.forEach(group => {
@@ -497,7 +509,7 @@ class ShipmentManager {
                 errorElement.textContent = '';
             }
         });
-        
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
@@ -616,7 +628,7 @@ class NotificationManager {
         notification.className = `notification notification-${type}`;
         notification.setAttribute('role', 'alert');
         notification.setAttribute('aria-live', 'polite');
-        
+
         const icon = this.getIconForType(type);
         notification.innerHTML = `
             <div class="notification-content">
@@ -627,7 +639,7 @@ class NotificationManager {
                 </button>
         </div>
     `;
-    
+
         return notification;
     }
 
@@ -660,7 +672,7 @@ window.showShipmentForm = () => {
     document.getElementById('shipment-form').style.display = 'block';
     document.getElementById('price-result').style.display = 'none';
     document.getElementById('shipment-form').scrollIntoView({ behavior: 'smooth' });
-    
+
     // Focus first input for accessibility
     const firstInput = document.querySelector('#shipment-form input');
     if (firstInput) {
@@ -681,35 +693,35 @@ window.confirmShipment = async () => {
         shipmentManager.notificationManager.showError('Sevkiyat verisi bulunamadı!');
         return;
     }
-    
+
     try {
         shipmentManager.showLoadingState();
-        
+
         // Update inventory
         const inventoryUpdate = updateInventory(
-            shipmentManager.currentShipmentData.category, 
-            shipmentManager.currentShipmentData.weight, 
+            shipmentManager.currentShipmentData.category,
+            shipmentManager.currentShipmentData.weight,
             'subtract'
         );
-    
-    if (inventoryUpdate.error) {
+
+        if (inventoryUpdate.error) {
             shipmentManager.notificationManager.showError(inventoryUpdate.message);
-        return;
-    }
-    
+            return;
+        }
+
         // Save shipment
-    const shipments = loadFromStorage(STORAGE_KEYS.SHIPMENTS) || [];
+        const shipments = loadFromStorage(STORAGE_KEYS.SHIPMENTS) || [];
         shipments.push(shipmentManager.currentShipmentData);
-    saveToStorage(STORAGE_KEYS.SHIPMENTS, shipments);
-    
+        saveToStorage(STORAGE_KEYS.SHIPMENTS, shipments);
+
         // Success notification
         shipmentManager.notificationManager.showSuccess(
             `Sevkiyat başarıyla oluşturuldu! Sipariş ID: ${shipmentManager.currentShipmentData.id}`
         );
-        
+
         // Reset form
         shipmentManager.resetForm();
-        
+
     } catch (error) {
         console.error('Confirm shipment error:', error);
         shipmentManager.notificationManager.showError('Sevkiyat onaylanırken hata oluştu!');
@@ -723,7 +735,7 @@ window.resetForm = () => {
     document.getElementById('shipment-form').style.display = 'none';
     document.getElementById('price-result').style.display = 'none';
     shipmentManager.currentShipmentData = null;
-    
+
     // Clear all validation states
     const formGroups = document.querySelectorAll('.form-group');
     formGroups.forEach(group => {
@@ -733,57 +745,61 @@ window.resetForm = () => {
             errorElement.textContent = '';
         }
     });
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.trackShipment = async () => {
     const trackingId = document.getElementById('trackingId').value.trim();
-    
+
     if (!trackingId) {
         shipmentManager.notificationManager.showError('Lütfen bir sipariş ID girin!');
         return;
     }
-    
+
     try {
         shipmentManager.showLoadingState();
-    
-    const shipments = loadFromStorage(STORAGE_KEYS.SHIPMENTS) || [];
-    const shipment = shipments.find(s => s.id === trackingId);
-    
-    if (!shipment) {
-        document.getElementById('tracking-result').innerHTML = `
+
+        const shipments = loadFromStorage(STORAGE_KEYS.SHIPMENTS) || [];
+        const shipment = shipments.find(s => s.id === trackingId);
+
+        if (!shipment) {
+            document.getElementById('tracking-result').innerHTML = `
             <div class="alert alert-danger">
                 ❌ Sipariş bulunamadı! Lütfen ID'nizi kontrol edin.
             </div>
         `;
-        return;
-    }
-    
-        // Get container info
-    let containerInfo = 'Henüz atanmadı';
-    if (shipment.containerId) {
-        const containers = loadFromStorage(STORAGE_KEYS.CONTAINERS) || [];
-        const container = containers.find(c => c.id === shipment.containerId);
-        if (container) {
-            containerInfo = `${container.type} Container #${container.id}`;
+            return;
         }
-    }
-    
+
+        // Get container info
+        let containerInfo = 'Henüz atanmadı';
+        if (shipment.containerId) {
+            const containers = loadFromStorage(STORAGE_KEYS.CONTAINERS) || [];
+            const container = containers.find(c => c.id === shipment.containerId);
+            if (container) {
+                containerInfo = `${container.type} Container #${container.id}`;
+            }
+        }
+
         // Status badge
-    let statusClass = 'status-pending';
-    let statusText = 'Beklemede';
-    
+        let statusClass = 'status-pending';
+        let statusText = 'Beklemede';
+
         const statusMap = {
             'Ready': { class: 'status-ready', text: 'Taşımaya Hazır' },
             'In Transit': { class: 'status-in-transit', text: 'Yolda' },
             'Completed': { class: 'status-completed', text: 'Teslim Edildi' }
         };
-        
+
         if (statusMap[shipment.status]) {
             statusClass = statusMap[shipment.status].class;
             statusText = statusMap[shipment.status].text;
     }
+    
+    // Hedef bilgisini düzelt
+    const destination = shipment.destinationCountry || shipment.destinationCity || shipment.destination || 'Bilinmiyor';
+    const formattedDestination = destination.includes('→') ? destination : `Muğla → ${destination}`;
     
     document.getElementById('tracking-result').innerHTML = `
         <div class="tracking-card">
@@ -802,7 +818,7 @@ window.trackShipment = async () => {
             </div>
             <div class="result-item">
                 <span class="result-label">Hedef:</span>
-                <span class="result-value">${shipment.destination}</span>
+                <span class="result-value">${formattedDestination}</span>
             </div>
             <div class="result-item">
                 <span class="result-label">Konteyner:</span>
@@ -822,9 +838,9 @@ window.trackShipment = async () => {
             </div>
         </div>
     `;
-        
+
         shipmentManager.notificationManager.showSuccess('Sevkiyat bilgileri yüklendi!');
-        
+
     } catch (error) {
         console.error('Track shipment error:', error);
         shipmentManager.notificationManager.showError('Takip sırasında hata oluştu!');
@@ -929,3 +945,62 @@ const notificationStyles = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = notificationStyles;
 document.head.appendChild(styleSheet);
+// ============================================
+// Yeni Eklenen Fonksiyonlar
+// ============================================
+
+// Ülke seçeneklerini güncelleyen fonksiyon
+window.updateCountryOptions = function () {
+    const shipmentType = document.getElementById('shipmentType').value;
+    const countrySelect = document.getElementById('destinationCountry');
+
+    // Dropdown'ı temizle
+    countrySelect.innerHTML = '<option value="">Hedef ülke seçin</option>';
+
+    if (!shipmentType) {
+        countrySelect.innerHTML = '<option value="">Önce sevkiyat türünü seçin</option>';
+        return;
+    }
+
+    let countries = [];
+
+    if (shipmentType === 'road') {
+        countries = Object.keys(window.ROAD_DISTANCES || {});
+    } else if (shipmentType === 'sea') {
+        countries = Object.keys(window.SEA_DISTANCES || {});
+    }
+
+    // Alfabetik olarak sırala
+    countries.sort();
+
+    // Ülkeleri dropdown'a ekle
+    countries.forEach(country => {
+        const option = document.createElement('option');
+        option.value = country;
+        option.textContent = country;
+        countrySelect.appendChild(option);
+    });
+};
+
+// Sevkiyat türü ve hedef ülke uyumluluğunu kontrol eden fonksiyon
+window.checkShipmentCompatibility = function (shipmentType, destinationCountry) {
+    if (shipmentType === 'road') {
+        const roadDistances = window.ROAD_DISTANCES || {};
+        if (!roadDistances[destinationCountry]) {
+            return {
+                compatible: false,
+                message: `Muğla'dan ${destinationCountry}'ye kara yolu ile sevkiyat mümkün değildir. Lütfen deniz yolu seçin.`
+            };
+        }
+    } else if (shipmentType === 'sea') {
+        const seaDistances = window.SEA_DISTANCES || {};
+        if (!seaDistances[destinationCountry]) {
+            return {
+                compatible: false,
+                message: `Muğla'dan ${destinationCountry}'ye deniz yolu ile sevkiyat mümkün değildir. Lütfen kara yolu seçin.`
+            };
+        }
+    }
+
+    return { compatible: true };
+};
